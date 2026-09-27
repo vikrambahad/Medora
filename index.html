@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b6f75">
+<title>MEDORA | Healthcare Finder V2</title>
+<meta name="description" content="MEDORA — professional college healthcare finder prototype for Nagpur">
+<link rel="preconnect" href="https://unpkg.com">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header class="topbar">
+  <a href="#home" class="brand"><span class="logo">✚</span><span>MEDORA <b>PLUS</b></span></a>
+  <nav id="nav">
+    <a href="#home">Home</a><a href="#hospitals">Hospitals</a><a href="#doctors">Doctors</a>
+    <a href="#map">Map</a><a href="#services">Services</a><a href="#emergency">Emergency</a>
+  </nav>
+  <div class="top-actions">
+    <button class="outline" id="loginBtn">Login</button>
+    <button class="menu" id="menuBtn">☰</button>
+  </div>
+</header>
+
+<main>
+<section class="page active" id="home">
+  <div class="hero">
+    <div class="hero-copy">
+      <span class="eyebrow">NAGPUR HEALTHCARE NETWORK • VERSION 2</span>
+      <h1>Healthcare,<br><em>closer to you.</em></h1>
+      <p>Discover hospitals, doctors, diagnostics and blood banks with a simple healthcare navigation experience.</p>
+      <div class="search">
+        <span>⌕</span><input id="globalSearch" placeholder="Search hospital, doctor, specialty or service"><button onclick="globalSearch()">Search</button>
+      </div>
+      <div class="location-line">📍 <b>Nagpur, Maharashtra</b> <button onclick="locateUser()">Use my location</button></div>
+    </div>
+    <div class="hero-panel">
+      <div class="hero-icon">❤</div><span class="eyebrow">PRIORITY CARE</span>
+      <h2>Need urgent help?</h2><p>Use the simplified emergency workflow.</p>
+      <a href="#emergency" class="danger">🚨 Open Emergency Mode</a>
+    </div>
+  </div>
+
+  <div class="section-head"><div><span class="eyebrow">QUICK ACCESS</span><h2>What do you need?</h2></div></div>
+  <div class="quick-grid">
+    <a href="#hospitals" class="quick"><span>🏥</span><b>Hospitals</b><small>Find care</small></a>
+    <a href="#doctors" class="quick"><span>👨‍⚕️</span><b>Doctors</b><small>Specialists</small></a>
+    <a href="#map" class="quick"><span>🗺️</span><b>Map</b><small>Nearby care</small></a>
+    <a href="#services" class="quick"><span>🩸</span><b>Blood</b><small>Blood banks</small></a>
+    <a href="#services" class="quick"><span>🧪</span><b>Diagnostics</b><small>Labs & imaging</small></a>
+    <a href="#appointments" class="quick"><span>📅</span><b>Appointments</b><small>Demo booking</small></a>
+  </div>
+
+  <div class="section-head"><div><span class="eyebrow">LOCAL DIRECTORY</span><h2>Featured healthcare</h2></div><a href="#hospitals" class="text-link">View all →</a></div>
+  <div id="featuredHospitals" class="cards"></div>
+</section>
+
+<section class="page" id="hospitals">
+  <div class="page-title"><span class="eyebrow">FIND CARE</span><h1>Hospitals & facilities</h1><p>Publicly listed Nagpur facilities are used as references for this academic prototype.</p></div>
+  <div class="toolbar"><input id="hospitalSearch" placeholder="Search by name or area..." oninput="renderHospitals()"><select id="facilityFilter" onchange="renderHospitals()"><option value="all">All</option><option value="hospital">Hospitals</option><option value="blood">Blood banks</option><option value="diagnostic">Diagnostics</option></select></div>
+  <div id="hospitalList" class="cards"></div>
+</section>
+
+<section class="page" id="hospital-detail">
+  <div id="hospitalDetail"></div>
+</section>
+
+<section class="page" id="doctors">
+  <div class="page-title"><span class="eyebrow">REAL-WORLD REFERENCES</span><h1>Doctors</h1><p>Names and specialties are referenced from institutional directories. Availability and appointments are not implied.</p></div>
+  <div class="toolbar"><input id="doctorSearch" placeholder="Search doctor, hospital or specialty..." oninput="renderDoctors()"></div>
+  <div id="doctorList" class="cards"></div>
+</section>
+
+<section class="page" id="doctor-detail"><div id="doctorDetail"></div></section>
+
+<section class="page" id="map">
+  <div class="page-title"><span class="eyebrow">EXPLORE NEARBY</span><h1>Healthcare Map</h1><p>Leaflet + OpenStreetMap map for the college prototype. Markers use the project directory coordinates.</p></div>
+  <div class="map-layout">
+    <div id="leafletMap"></div>
+    <aside class="map-side">
+      <div class="legend"><b>Map filters</b>
+        <label><input type="checkbox" checked data-type="hospital"> Hospitals</label>
+        <label><input type="checkbox" checked data-type="blood"> Blood banks</label>
+        <label><input type="checkbox" checked data-type="diagnostic"> Diagnostics</label>
+      </div>
+      <div id="mapList"></div>
+    </aside>
+  </div>
+</section>
+
+<section class="page" id="services">
+  <div class="page-title"><span class="eyebrow">HEALTH SERVICES</span><h1>Services</h1><p>Explore the modules planned for MEDORA V2.</p></div>
+  <div class="service-panels">
+    <article><span>🩸</span><h3>Blood Connect</h3><p>Find listed blood banks and open directions.</p><button onclick="showService('blood')">View blood banks</button></article>
+    <article><span>🧪</span><h3>Diagnostics</h3><p>Find diagnostic and imaging centres.</p><button onclick="showService('diagnostic')">View diagnostics</button></article>
+    <article><span>🛏️</span><h3>Bed Information</h3><p>Future hospital-admin module with timestamped updates.</p><button onclick="notice('Live bed data requires a verified hospital/API feed.')">Demo</button></article>
+    <article><span>💊</span><h3>Pharmacy</h3><p>Future nearby pharmacy and verified stock module.</p><button onclick="notice('Medicine stock requires pharmacy integration.')">Explore</button></article>
+  </div>
+  <div id="serviceResults" class="cards service-results"></div>
+</section>
+
+<section class="page" id="appointments">
+  <div class="page-title"><span class="eyebrow">DEMO WORKFLOW</span><h1>Book an appointment</h1><p>This GitHub Pages version creates a local demo booking only. It does not contact a hospital.</p></div>
+  <form class="form-card" id="bookingForm">
+    <div class="two"><label>Patient name<input id="patientName" required></label><label>Mobile<input id="patientMobile" required pattern="[0-9]{10}" inputmode="numeric"></label></div>
+    <div class="two"><label>Hospital<select id="bookingHospital"></select></label><label>Doctor<select id="bookingDoctor"></select></label></div>
+    <div class="two"><label>Date<input id="bookingDate" type="date" required></label><label>Time<select><option>10:00 AM</option><option>11:30 AM</option><option>2:00 PM</option><option>4:30 PM</option></select></label></div>
+    <label>Consultation type<select><option>Hospital visit</option><option>Video consultation (demo)</option></select></label>
+    <button class="primary" type="submit">Confirm Demo Appointment</button>
+  </form>
+  <div id="bookingResult"></div>
+</section>
+
+<section class="page" id="emergency">
+  <div class="emergency-wrap">
+    <div class="emergency-title"><div class="sos">🚨</div><div><span class="eyebrow">PRIORITY WORKFLOW</span><h1>Emergency Mode</h1><p>For a real emergency in India, call <b>112</b>. MEDORA is a navigation prototype.</p></div></div>
+    <div class="emergency-grid"><a href="tel:112" class="emergency-main">📞 Call 112</a><button onclick="locateUser()">📍 Use my location</button><a href="#hospitals">🏥 Find hospitals</a><a href="#services">🩸 Find blood</a></div>
+    <div class="warning">⚠️ Do not rely on this demo for live bed, blood or emergency availability. Confirm directly with the facility.</div>
+  </div>
+</section>
+
+<section class="page" id="login">
+  <div class="auth-shell">
+    <div class="auth-brand"><span class="logo big">✚</span><h1>Welcome to MEDORA</h1><p>Demo authentication for the college project.</p></div>
+    <form id="loginForm" class="form-card auth-card">
+      <h2>Login</h2><label>Email<input id="loginEmail" type="email" required placeholder="you@example.com"></label>
+      <label>Password<input id="loginPassword" type="password" required placeholder="••••••••"></label>
+      <button class="primary">Login</button><p class="hint">Demo: any valid email + password works locally.</p>
+      <button type="button" class="outline wide" onclick="go('#register')">Create account</button>
+      <button type="button" class="text-button" onclick="demoAdmin()">Use Admin Demo</button>
+    </form>
+  </div>
+</section>
+
+<section class="page" id="register">
+  <div class="auth-shell"><div class="auth-brand"><span class="logo big">✚</span><h1>Create your account</h1><p>Demo registration stored in browser localStorage.</p></div>
+    <form id="registerForm" class="form-card auth-card"><h2>Register</h2><label>Full name<input id="regName" required></label><label>Email<input id="regEmail" type="email" required></label><label>Password<input id="regPassword" type="password" minlength="6" required></label><button class="primary">Create account</button><button type="button" class="outline wide" onclick="go('#login')">Back to login</button></form>
+  </div>
+</section>
+
+<section class="page" id="profile">
+  <div class="page-title"><span class="eyebrow">PERSONAL AREA</span><h1>My Health</h1><p id="profileIntro">Demo profile dashboard.</p></div>
+  <div class="profile-grid"><article class="profile-card"><span>👤</span><h3 id="profileName">Guest</h3><p id="profileEmail">Not logged in</p><button class="primary" onclick="logout()">Logout</button></article><article class="profile-card"><span>📅</span><h3>Appointments</h3><p id="profileBooking">No demo booking yet.</p></article><article class="profile-card"><span>❤️</span><h3>Saved facilities</h3><p>Saved places can be connected to a database in the full-stack version.</p></article></div>
+</section>
+
+<section class="page" id="admin">
+  <div class="admin-head"><div><span class="eyebrow">ROLE: ADMIN</span><h1>MEDORA Admin</h1><p>Demo management dashboard for the college project.</p></div><button class="outline" onclick="logout()">Logout</button></div>
+  <div class="stats"><div><b>08</b><span>Directory records</span></div><div><b>09</b><span>Doctor references</span></div><div><b id="adminBookings">00</b><span>Demo bookings</span></div><div><b>03</b><span>Modules</span></div></div>
+  <div class="admin-grid"><article><h3>Facility management</h3><p>Add/edit hospitals, diagnostics and blood banks in the backend version.</p><button class="primary" onclick="notice('Admin CRUD is planned for the Node.js + database deployment.')">Manage</button></article><article><h3>Verification queue</h3><p>Use source URLs and verification timestamps before publishing live availability.</p><button class="primary" onclick="notice('Verification workflow opened in full-stack version.')">Review</button></article><article><h3>Appointment management</h3><p>View requested, confirmed and cancelled appointments after backend integration.</p><button class="primary" onclick="go('#appointments')">View demo</button></article></div>
+</section>
+
+<section class="page" id="about"><div class="page-title"><span class="eyebrow">COLLEGE PROJECT</span><h1>About MEDORA</h1><p><b>Find Care • Check Information • Reach Help Faster.</b></p></div><div class="about-card"><h2>Version 2 architecture</h2><p>Responsive frontend + Leaflet map + demo authentication + hospital/doctor detail pages + admin UI + database schema for a future full-stack deployment.</p><h3>Data integrity</h3><p>Real-world public references are included, but live availability, appointment slots and clinical advice are not fabricated.</p></div></section>
+</main>
+
+<footer><div><a class="brand footer-brand" href="#home"><span class="logo">✚</span>MEDORA <b>PLUS</b></a><p>Healthcare, closer to you.</p></div><div><a href="#about">About</a><a href="#services">Services</a><a href="#emergency">Emergency</a><a href="#admin">Admin</a></div><small>College Project • Version 2.0 • Nagpur</small></footer>
+<div id="toast" class="toast"></div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+<script src="js/app.js"></script>
+</body></html>
